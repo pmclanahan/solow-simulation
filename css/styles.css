@@ -36,8 +36,8 @@
    font-size: 8pt;
 }
 
-@media only screen {
-  .column43{
-    font-size : 2pt;
-  }
+@media only screen and (max-width: 320px) {
+
+   body { font-size: 2em; }
+
 }
