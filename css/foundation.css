@@ -153,10 +153,6 @@ select {
   float: left; }
 
 @media only screen {
-
-  #column43 {
-    font-size: 2pt
-  }
   .small-push-0 {
     position: relative;
     left: 0%;
@@ -387,7 +383,6 @@ select {
   .columns.small-uncentered.opposite {
     float: right; } }
 @media only screen and (min-width: 40.063em) {
-
   .medium-push-0 {
     position: relative;
     left: 0%;
