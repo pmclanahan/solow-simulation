@@ -25,3 +25,13 @@
     display: block;
     padding-top: 75%;  /* initial ratio of 1:1*/
 }
+
+.plot {
+   padding: 1%;
+   position: absolute;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   right: 0;
+   font-size: 8pt;
+}
