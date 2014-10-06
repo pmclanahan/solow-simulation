@@ -257,14 +257,14 @@ $(document).ready(function () {
                         if (i<5) {
                             data.push({
                             x: i,
-                            y: param_A1*Math.pow(klag,param_alpha1)
+                            y: Math.round(100000*param_A1*Math.pow(klag,param_alpha1))/100000
                         })
                             klag = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
                         }
                         else {
                             data.push({
                             x: i,
-                            y: param_A2*Math.pow(klag,param_alpha2)
+                            y: Math.round(100000*param_A2*Math.pow(klag,param_alpha2))/100000
                         })
                             klag = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
                         }
@@ -389,14 +389,14 @@ $(document).ready(function () {
                         if (i<5) {
                             data.push({
                             x: i,
-                            y: (1-param_s1)*param_A1*Math.pow(klag,param_alpha1)
+                            y: Math.round(100000*(1-param_s1)*param_A1*Math.pow(klag,param_alpha1))/100000
                         })
                             klag = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
                         }
                         else {
                             data.push({
                             x: i,
-                            y: (1-param_s2)*param_A2*Math.pow(klag,param_alpha2)
+                            y: Math.round(100000*(1-param_s2)*param_A2*Math.pow(klag,param_alpha2))/100000
                         })
                             klag = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
                         }
@@ -522,14 +522,14 @@ $(document).ready(function () {
                         if (i<5) {
                             data.push({
                             x: i,
-                            y: (param_s1)*param_A1*Math.pow(klag,param_alpha1)
+                            y: Math.round(100000*(param_s1)*param_A1*Math.pow(klag,param_alpha1))/100000
                         })
                             klag = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
                         }
                         else {
                             data.push({
                             x: i,
-                            y: (param_s2)*param_A2*Math.pow(klag,param_alpha2)
+                            y: Math.round(100000*(param_s2)*param_A2*Math.pow(klag,param_alpha2))/100000
                         })
                             klag = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
                         }
@@ -655,7 +655,7 @@ $(document).ready(function () {
                         if (i<5) {
                             data.push({
                             x: i,
-                            y: k*e
+                            y: Math.round(100000*k*e)/100000
                         })
                             klag=k,
                             elag=e,
@@ -665,7 +665,7 @@ $(document).ready(function () {
                         else {
                             data.push({
                             x: i,
-                            y: k*e
+                            y: Math.round(100000*k*e)/100000
                         })
                             klag=k,
                             elag=e,
@@ -809,7 +809,7 @@ $(document).ready(function () {
                         if (i<5) {
                             data.push({
                             x: i,
-                            y: e*param_A1*Math.pow(k,param_alpha1)
+                            y: Math.round(100000*e*param_A1*Math.pow(k,param_alpha1))/100000
                         })
                             elag=e,
                             e=(1+param_g1)*elag,
@@ -819,7 +819,7 @@ $(document).ready(function () {
                         else {
                             data.push({
                             x: i,
-                            y: e*param_A2*Math.pow(k,param_alpha2)
+                            y: Math.round(100000*e*param_A2*Math.pow(k,param_alpha2))/100000
                         })
                             elag=e,
                             e=(1+param_g2)*elag,
@@ -953,7 +953,7 @@ $(document).ready(function () {
                         if (i<5) {
                             data.push({
                             x: i,
-                            y: e*(1-param_s1)*param_A1*Math.pow(k,param_alpha1)
+                            y: Math.round(100000*e*(1-param_s1)*param_A1*Math.pow(k,param_alpha1))/100000
                         })
                             elag=e,
                             e=(1+param_g1)*elag,
@@ -963,7 +963,7 @@ $(document).ready(function () {
                         else {
                             data.push({
                             x: i,
-                            y: e*(1-param_s2)*param_A2*Math.pow(k,param_alpha2)
+                            y: Math.round(100000*e*(1-param_s2)*param_A2*Math.pow(k,param_alpha2))/100000
                         })
                             elag=e,
                             e=(1+param_g1)*elag,
@@ -1096,7 +1096,7 @@ $(document).ready(function () {
                         if (i<5) {
                             data.push({
                             x: i,
-                            y: e*(param_s1)*param_A1*Math.pow(k,param_alpha1)
+                            y: Math.round(100000*e*(param_s1)*param_A1*Math.pow(k,param_alpha1))/100000
                         })
                             elag=e,
                             e=(1+param_g1)*elag,
@@ -1106,7 +1106,7 @@ $(document).ready(function () {
                         else {
                             data.push({
                             x: i,
-                            y: e*(param_s2)*param_A2*Math.pow(k,param_alpha2)
+                            y: Math.round(100000*e*(param_s2)*param_A2*Math.pow(k,param_alpha2))/100000
                         })
                             elag=e,
                             e=(1+param_g1)*elag,
