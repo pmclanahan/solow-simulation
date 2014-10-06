@@ -64,7 +64,7 @@ $(document).ready(function () {
             title: {
                 text: 'Capital Per Effective Worker',
                 style: {
-                    "fontSize": "12px" 
+                    "fontSize": "15px" 
                 }
             },
             xAxis: {
