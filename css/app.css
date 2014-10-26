@@ -36,7 +36,7 @@
    font-size: 8pt;
 }
 
-.theplots {
+/*.theplots {
     animation : none;
     animation-delay : 0;
     animation-direction : normal;
@@ -185,6 +185,13 @@
     width : auto;
     word-spacing : normal;
     z-index : auto;
+        /*text-align: left;*/
+    font-family:  'Lucida Grande';
+    width: 90%;
+    margin: 0 auto;
+}*/
+
+.theplots {
         /*text-align: left;*/
     font-family:  'Lucida Grande';
     width: 90%;
