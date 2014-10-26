@@ -26,17 +26,17 @@
     padding-top: 75%;  /* initial ratio of 1:1*/
 }
 
-.plot {
-   padding: 1%;
+#plot {
+ /*  padding: 1%;
    position: absolute;
    top: 0;
    left: 0;
    bottom: 0;
    right: 0;
-   font-size: 8pt;
+   font-size: 8pt;*/
 }
 
-#theplots {
+/*#theplots {
     animation : none;
     animation-delay : 0;
     animation-direction : normal;
@@ -188,5 +188,10 @@
         /*text-align: left;*/
     font-family:  'Lucida Grande';
     width: 90%;
+    margin: 0 auto;
+}*/
+
+.plotBox {
+    width: 93%;
     margin: 0 auto;
 }
