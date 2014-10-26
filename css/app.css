@@ -185,4 +185,18 @@
     width : auto;
     word-spacing : normal;
     z-index : auto;
+        /*text-align: left;*/
+    font-family:  'Lucida Grande';
+    width: 90%;
+    margin: 0 auto;
+}
+
+.plot {
+   padding: 1%;
+   position: absolute;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   right: 0;
+   font-size: 8pt;
 }
