@@ -3,14 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
-    <title>Solow Model Simulation Tool</title>
+    <title>Solow Growth Model</title>
 
     <link rel="stylesheet" href="css/foundation.css" />
     <link href="css/app.css" type="text/css" rel="stylesheet" />
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="js/solow.js"></script>
+    <script src="http://highslide-software.github.io/export-csv/export-csv.js"></script>
 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -42,7 +45,7 @@
     <div class="row">
       <div class="large-12 columns">
         <!-- <img src="http://placehold.it/1000x400&text=[img]"> -->
-        <h1>Solow Model Simulation Tool</h1>
+        <h1>Solow Growth Model</h1>
         <hr>
       </div>
     </div>
@@ -54,9 +57,27 @@
     </div> -->
     <div class="large-12 columns">
       <!-- <h4>This is a content section.</h4> -->
-      <p><strong>Instructions:</strong> Use this tool to construct transition paths implied by the Solow growth model. You can use the tool to simulate how the model economy transitions from one steady state to another. You can also use the tool to simulate how the model economy approaches the steady state from an initial stock of capital per effective worker that is not a steady state.
+      <h4>Background</h4>
+      <p>The Solow growth model is a basic account of the link between physical capital accumulation, exogenous technological progress, economic growth. The four basic components of the model are:
+      $$Y_t = A K_t^{\alpha} (E_tL_t)^{1-\alpha}$$
+      $$C_t = (1-s) Y_t$$
+      $$Y_t = C_t + I_t$$
+      $$K_{t+1} = I_t + (1-\delta)K_t,$$
+      where \(Y_t\) denotes real GDP, \(K_t\) is the stock of physical capital, \(E_t\) is labor efficiency, \(C_t\) is consumption, and \(I_t\) is investment in new physical capital. The Solow model is frequently studyied using <em>continuous time</em> methods, but here \(t\) is discrete and is in units of years.</p>
+      
+      <p>The first equation of the model is a standard Codd-Douglas production function and so the parameter \(A\) denotes total factor productivity and \(\alpha\) the capital share of national income. The second equation is a consumption function with \(s\) representing the saving rate. The third equation is the national income accounting identity for a closed economy without government purchases. The final equation is law of motion for the stock of physical capital where \(\delta\) is the share of the capital stock that falls apart or becomes obsolete each period.
+
+      <p>The model has two exogenous variables &mdash; population \(L_t\) and labor efficiency \(E_t\) &mdash; that grow over time at rates \(n\) and \(g\). Because of these exogenous growth sources, it is routine to recast the model with all variabels divided by \(E_t\cdot L_t\) and converted into <em>per effective worker</em> units. The recast model is written as:
+        $$y_t = A k_t^{\alpha}$$
+        $$c_t = (1-s) y_t$$
+        $$y_t = c_t + i_t$$
+        $$k_{t+1} = i_t + (1-\delta)k_t,$$
+      where \(y_t = Y_t/E_tL_t\), etc.</p>
+
+      <h4>Instructions</h4>
+      <p>Use this tool to construct transition paths implied by the Solow growth model. You can use the tool to simulate how the model economy transitions from one steady state to another. You can also use the tool to simulate how the model economy approaches the steady state from an initial stock of capital per effective worker that is not a steady state.
         <ol>
-          <li><strong>Transition between steady states.</strong> Set the number of periods to simulate and leave the <em>Start in the steady state</em> box checked. Set all values in the <em>Initial parameter values</em> section. Then make sure that all values in the <em>New parameter values</em> section match those in the initial values section except for the parameter that you want to change. Click the <em>Submit</em> button. The parameter change will take place in the fifth period.</li>
+          <li><strong>Transition between steady states.</strong> Set the number of periods to simulate and leave the <em>Start in the steady state</em> box checked. Set all values in the <em>Initial parameter values</em> section. Then make sure that all values in the <em>New parameter values</em> section match those in the initial values section except for the parameter that you want to change. Check the <em>Show original path in <span class="red">red</span></em> box if you want to also see the original path with no paramter change. Click the <em>Submit</em> button. The parameter change will take place in the fifth period.</li>
           <br>
           <li><strong>Transition to the steady state.</strong> Set the number of periods to simulate. Uncheck the <em>Start in the steady state</em> box and enter an initial value of capital per effective worker. Set all values in the <em>Initial parameter values</em> section. Then make sure that all values in the <em>New parameter values</em> section match those in the initial values section. Click the <em>Submit</em> button.</li>
         </ol>
@@ -73,25 +94,26 @@
           <div class="row">
             <div class="large-4 columns">
               <label for="tmax">Number of periods to simulate</label>
-              <input id="tmax" type="number" step="1" value="20">
+              <input id="tmax" type="number" min="2" step="1" value="20">
             </div>
             <div class="large-4 columns">
-              <label for="param_e0">Initial labor efficiency</label>
-              <input id="param_e0" type="number" step="0.01" value="1">
+              <label for="e0">Initial labor efficiency</label>
+              <input id="e0" type="number" min="0.01" step="0.01" value="1">
             </div>
             <div class="large-4 columns">
-              <label for="param_k0">Initial capital per effective worker</label>
-              <input id="param_k0" type="number" step="any">
+              <label for="k0">Initial capital per effective worker</label>
+              <input id="k0" type="number" min="0" step="any">
             </div>
             <div class="large-4 columns">
-              <!-- Blank column-->
+              &nbsp;
             </div>
             <div class="large-4 columns">
-              <!-- Blank column-->
+              <label for="counterFactual">
+              <input id="counterFactual" type="checkbox" >Show original path in <span class="red">red</span>
             </div>
             <div class="large-4 columns">
               <label for="steady">
-              <input id="steady" type="checkbox" checked> Start in the steady state.
+              <input id="steady" type="checkbox" checked> Start in the steady state
               </label>
             </div>      
           </div>
@@ -103,28 +125,28 @@
           <legend>Initial parameter values</legend>
           <div class="row">
             <div class="large-4 columns">
-              <label for="param_A1">Total factor productivity (<em>A</em>)</label>
-              <input id="param_A1" type="number" step="0.01" value="1">
+              <label for="A1">Total factor productivity (<em>A</em>)</label>
+              <input id="A1" type="number" min="0.01" step="0.01" value="1">
             </div>
             <div class="large-4 columns">
-              <label for="param_alpha1">Capital share of income (&#945;)</label>
-              <input id="param_alpha1" type="number" step="0.01" value="0.35">
+              <label for="alpha1">Capital share of income (&#945;)</label>
+              <input id="alpha1" type="number" min="0.01" step="0.01" value="0.35">
             </div>
             <div class="large-4 columns">
-              <label for="param_s1">Saving rate (<em>s</em>)</label>
-              <input id="param_s1" type="number" step="0.01" value="0.1">
+              <label for="s1">Saving rate (<em>s</em>)</label>
+              <input id="s1" type="number" step="0.01" value="0.1">
             </div>
             <div class="large-4 columns">
-              <label for="param_delta1">Capital depreciation rate (&#948;)</label>
-              <input id="param_delta1" type="number" step="0.01" value="0.06">
+              <label for="delta1">Capital depreciation rate (&#948;)</label>
+              <input id="delta1" type="number" step="0.01" value="0.06">
             </div>
             <div class="large-4 columns">
-              <label for="param_n1">Growth rate of population (<em>n</em>)</label>
-              <input id="param_n1" type="number" step="0.01" value="0.01">
+              <label for="n1">Growth rate of population (<em>n</em>)</label>
+              <input id="n1" type="number" step="0.01" value="0.01">
             </div>
             <div class="large-4 columns">
-              <label for="param_g1">Growth rate of labor efficiency (<em>g</em>)</label>
-              <input id="param_g1" type="number" step="0.01" value="0.02">
+              <label for="g1">Growth rate of labor efficiency (<em>g</em>)</label>
+              <input id="g1" type="number" step="0.01" value="0.02">
             </div>
           </div>
         </fieldset>
@@ -135,36 +157,41 @@
           <legend>New parameter values</legend>
           <div class="row">
             <div class="large-4 columns">
-              <label for="param_A2">Total factor productivity (<em>A</em>)</label>
-              <input id="param_A2" type="number" step="0.01" value="1">
+              <label for="A2">Total factor productivity (<em>A</em>)</label>
+              <input id="A2" type="number" step="0.01" value="1">
             </div>
             <div class="large-4 columns">
-              <label for="param_alpha2">Capital share of income (&#945;)</label>
-              <input id="param_alpha2" type="number" step="0.01" value="0.35">
+              <label for="alpha2">Capital share of income (&#945;)</label>
+              <input id="alpha2" type="number" step="0.01" value="0.35">
             </div>
             <div class="large-4 columns">
-              <label for="param_s2">Saving rate (<em>s</em>)</label>
-              <input id="param_s2" type="number" step="0.01" value="0.1">
+              <label for="s2">Saving rate (<em>s</em>)</label>
+              <input id="s2" type="number" step="0.01" value="0.1">
             </div>
             <div class="large-4 columns">
-              <label for="param_delta2">Capital depreciation rate (&#948;)</label>
-              <input id="param_delta2" type="number" step="0.01" value="0.06">
+              <label for="delta2">Capital depreciation rate (&#948;)</label>
+              <input id="delta2" type="number" step="0.01" value="0.06">
             </div>
             <div class="large-4 columns">
-              <label for="param_n2">Growth rate of population (<em>n</em>)</label>
-              <input id="param_n2" type="number" step="0.01" value="0.01">
+              <label for="n2">Growth rate of population (<em>n</em>)</label>
+              <input id="n2" type="number" step="0.01" value="0.01">
             </div>
             <div class="large-4 columns">
-              <label for="param_g2">Growth rate of labor efficiency (<em>g</em>)</label>
-              <input id="param_g2" type="number" step="0.01" value="0.02">
+              <label for="g2">Growth rate of labor efficiency (<em>g</em>)</label>
+              <input id="g2" type="number" step="0.01" value="0.02">
             </div>
           </div>
         </fieldset>  
         <!-- <fieldset> -->
-          <div class="large-4 columns">
-            <button type="submit" class="small button" onSubmit="javascript: location.href='#theplots'; ">Submit</button>
-            <!-- <button  type="submit">submit</button> -->
+          <div class="large-3 columns">
+            <button type="submit" class="small button" onclick="window.location.href='#plotBox'">Submit</button>
           </div>
+          <div class="large-4 columns">
+          <button type="reload" class="small button" onclick="reloadFunction()">Reset</button>
+        </div>
+        <div class="large-4 columns">
+          &nbsp;
+        </div>
         <!-- </fieldset> -->
 
       </form>
@@ -172,7 +199,7 @@
     </div>
   </div>
   
-  <div class="plotBox">
+  <div class="plotBox" id ="plotBox">
     <div class="column43">
       <div id="capital_per_eff_worker" class="plot"></div>
     </div>
@@ -180,10 +207,10 @@
       <div id="output_per_eff_worker" class="plot"></div>
     </div>
     <div class="column43">
-      <div id="cons_per_eff_worker" class="plot"></div>
+      <div id="consumption_per_eff_worker" class="plot"></div>
     </div>
     <div class="column43">
-      <div id="inv_per_eff_worker" class="plot"></div>
+      <div id="investment_per_eff_worker" class="plot"></div>
     </div>
     <div class="column43">
       <div id="capital_per_worker" class="plot"></div>
@@ -192,10 +219,10 @@
       <div id="output_per_worker" class="plot"></div>
     </div>
     <div class="column43">
-      <div id="cons_per_worker" class="plot"></div>
+      <div id="consumption_per_worker" class="plot"></div>
     </div>
     <div class="column43">
-      <div id="inv_per_worker" class="plot"></div>
+      <div id="investment_per_worker" class="plot"></div>
     </div>
   </div>
  

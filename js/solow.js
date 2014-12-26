@@ -4,30 +4,32 @@ $(document).ready(function () {
     $('#ParameterInput').on('submit', function (e) {
         e.preventDefault();
         var tmax = parseInt($('#tmax').val());
-        var param_A1 = parseFloat($('#param_A1').val());
-        var param_alpha1 = parseFloat($('#param_alpha1').val());
-        var param_s1 = parseFloat($('#param_s1').val());
-        var param_delta1 = parseFloat($('#param_delta1').val());
-        var param_g1 = parseFloat($('#param_g1').val());
-        var param_n1 = parseFloat($('#param_n1').val());
-        var param_A2 = parseFloat($('#param_A2').val());
-        var param_alpha2 = parseFloat($('#param_alpha2').val());
-        var param_s2 = parseFloat($('#param_s2').val());
-        var param_delta2 = parseFloat($('#param_delta2').val());
-        var param_g2 = parseFloat($('#param_g2').val());
-        var param_n2 = parseFloat($('#param_n2').val());                    
-        var param_k0 = parseFloat($('#param_k0').val());
-        var param_e0 = parseFloat($('#param_e0').val());
-        var param_l0 = parseFloat($('#param_l0').val());
-        var kstar1 = Math.pow(param_s1*param_A1/(param_delta1+param_n1+param_g1),1/(1-param_alpha1));
-        var kstar2 = Math.pow(param_s2*param_A2/(param_delta2+param_n2+param_g2),1/(1-param_alpha2));
-        var interval = 0
+        var a1 = parseFloat($('#A1').val());
+        var alpha1 = parseFloat($('#alpha1').val());
+        var s1 = parseFloat($('#s1').val());
+        var delta1 = parseFloat($('#delta1').val());
+        var g1 = parseFloat($('#g1').val());
+        var n1 = parseFloat($('#n1').val());
+        var a2 = parseFloat($('#A2').val());
+        var alpha2 = parseFloat($('#alpha2').val());
+        var s2 = parseFloat($('#s2').val());
+        var delta2 = parseFloat($('#delta2').val());
+        var g2 = parseFloat($('#g2').val());
+        var n2 = parseFloat($('#n2').val());                    
+        var k0 = parseFloat($('#k0').val());
+        var e0 = parseFloat($('#e0').val());
+        var l0 = parseFloat($('#l0').val());
+        var kstar1 = Math.pow(s1*a1/(delta1+n1+g1),1/(1-alpha1));
+        var kstar2 = Math.pow(s2*a2/(delta2+n2+g2),1/(1-alpha2));
+        var interval = 0;
+        var enableMarks = true;
+        var showCounterFactual = document.getElementById ("counterFactual");
 
         var input = document.getElementById ("steady");
             if (input.checked == true) {
-                var param_k0 = kstar1;
+                var k0 = kstar1;
             } else {
-                var param_k0 = param_k0;
+                var k0 = k0;
             }
 
         if (tmax<=30) {
@@ -35,12 +37,120 @@ $(document).ready(function () {
         }
         else if (30<tmax&&tmax<=100) {
             interval = 20;
+            enableMarks = false;
         }
         else if (100<tmax&&tmax<=500) {
             interval = 100;
+            enableMarks = false
         }
         else {
             interval = 500;
+            enableMarks = false
+        }
+
+        var y0 = A1*Math.pow(k0,alpha1)
+        var c0 = (1-s1)*y0
+        var i0 = s1*y0
+        var K0 = e0*k0
+        var Y0 = e0*y0
+        var C0 = e0*c0
+        var I0 = e0*i0
+
+        var kSeries = [k0];
+        var ySeries = [];
+        var cSeries = [];
+        var iSeries = [];
+        var KSeries = [];
+        var YSeries = [];
+        var CSeries = [];
+        var ISeries = [];
+        var eSeries = [e0/(1+g1)];
+
+        var kSeries2 = [k0];
+        var ySeries2 = [];
+        var cSeries2 = [];
+        var iSeries2 = [];
+        var KSeries2 = [];
+        var YSeries2 = [];
+        var CSeries2 = [];
+        var ISeries2 = [];
+        var eSeries2 = [e0/(1+g1)];
+        // nSeries = [0];
+
+        var k =k0;
+        var kLag = k0;
+        var eff=1;
+        var effLag=0;
+        var y=0;
+        var k2 =k0;
+        var kLag2 = k0;
+        var eff2=0;
+        var effLag2=0;
+
+        for (i = 0; i <= tmax; i++) {
+            if (i<5) {
+                effLag = eSeries[eSeries.length-1];
+                eff = (1+g1)*effLag;
+                kLag = kSeries[kSeries.length-1];
+                k = s1*a1*Math.pow(kLag,alpha1)+(1-delta1-n1-g1)*kLag;
+                eSeries.push(eff);
+                kSeries.push(k);
+                ySeries.push(a1*Math.pow(kLag,alpha1));
+                cSeries.push((1-s1)*a1*Math.pow(kLag,alpha1));
+                iSeries.push(s1*a1*Math.pow(kLag,alpha1));
+                KSeries.push(eff*kLag);
+                YSeries.push(eff*a1*Math.pow(kLag,alpha1));
+                CSeries.push(eff*(1-s1)*a1*Math.pow(kLag,alpha1));
+                ISeries.push(eff*s1*a1*Math.pow(kLag,alpha1));
+
+                effLag2 = eSeries2[eSeries2.length-1];
+                eff2 = (1+g1)*effLag2;
+                kLag2 = kSeries2[kSeries2.length-1];
+                k2 = s1*a1*Math.pow(kLag2,alpha1)+(1-delta1-n1-g1)*kLag2;
+                eSeries2.push(eff2);
+                kSeries2.push(k2);
+                ySeries2.push(a1*Math.pow(kLag2,alpha1));
+                cSeries2.push((1-s1)*a1*Math.pow(kLag2,alpha1));
+                iSeries2.push(s1*a1*Math.pow(kLag2,alpha1));
+                KSeries2.push(eff2*kLag2);
+                YSeries2.push(eff2*a1*Math.pow(kLag2,alpha1));
+                CSeries2.push(eff2*(1-s1)*a1*Math.pow(kLag2,alpha1));
+                ISeries2.push(eff2*s1*a1*Math.pow(kLag2,alpha1));
+            }
+            else {
+                effLag = eSeries[eSeries.length-1];
+                eff = (1+g2)*effLag;
+                kLag = kSeries[kSeries.length-1];
+                k = s2*a2*Math.pow(kLag,alpha2)+(1-delta2-n2-g2)*kLag;
+                eSeries.push(eff);
+                kSeries.push(k);
+                ySeries.push(a2*Math.pow(kLag,alpha2));
+                cSeries.push((1-s2)*a2*Math.pow(kLag,alpha2));
+                iSeries.push(s2*a2*Math.pow(kLag,alpha2));
+                KSeries.push(eff*kLag);
+                YSeries.push(eff*a2*Math.pow(kLag,alpha2));
+                CSeries.push(eff*(1-s2)*a2*Math.pow(kLag,alpha2));
+                ISeries.push(eff*s2*a2*Math.pow(kLag,alpha2));
+
+                effLag2 = eSeries2[eSeries2.length-1];
+                eff2 = (1+g1)*effLag2;
+                kLag2 = kSeries2[kSeries2.length-1];
+                k2 = s1*a1*Math.pow(kLag2,alpha1)+(1-delta1-n1-g1)*kLag2;
+                eSeries2.push(eff2);
+                kSeries2.push(k2);
+                ySeries2.push(a1*Math.pow(kLag2,alpha1));
+                cSeries2.push((1-s1)*a1*Math.pow(kLag2,alpha1));
+                iSeries2.push(s1*a1*Math.pow(kLag2,alpha1));
+                KSeries2.push(eff2*kLag2);
+                YSeries2.push(eff2*a1*Math.pow(kLag2,alpha1));
+                CSeries2.push(eff2*(1-s1)*a1*Math.pow(kLag2,alpha1));
+                ISeries2.push(eff2*s1*a1*Math.pow(kLag2,alpha1));
+
+
+            }
+
+        console.log(kSeries)
+        console.log(kSeries2)
         }
 
         $('#capital_per_eff_worker').highcharts({
@@ -53,7 +163,7 @@ $(document).ready(function () {
                 series: {
                     lineWidth: 2,
                     marker : {
-                        enabled : true,
+                        enabled : enableMarks,
                         radius : 3},
                     animation: {
                         duration: 10000     //Controls the time required for plot to be fully rendered.
@@ -83,6 +193,7 @@ $(document).ready(function () {
                         return Math.round(this.value*100)/100;
                     }
                 },
+                minRange: 1,
                 plotLines: [{
                     value: 0,
                     width: 2,
@@ -99,99 +210,38 @@ $(document).ready(function () {
             series: [{
                 name: 'k',
                 data: (function () {
-                    var data = [],
-                            i,
-                            k=param_k0;
+                    var data = [];
 
                     for (i = 0; i <= tmax; i++) {
-                        if (i<5) {
-                            data.push({
+
+                        data.push({
                             x: i,
-                            // y: k
-                            y: Math.round(100000*k)/100000
+                            y: Math.round(100000*kSeries[i])/100000,
                         })
-                            klag=k
-                            k = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
-                        }
-                        else {
+                    }
+                    return data;
+                })()
+            },
+            {
+                name: 'k original',
+                color: '#f15c80',
+                data: (function () {
+                    var data = [];
+
+                    for (i = 5; i <= tmax; i++) {
+
+                        if (showCounterFactual.checked===true) {
                             data.push({
-                            x: i,
-                            y: Math.round(100000*k)/100000
-                        })
-                            klag=k,
-                            k = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
+                                x: i,
+                                y: Math.round(100000*kSeries2[i])/100000,
+                            })
                         }
                     }
                     return data;
                 })()
             },
-            //  {
-            //     name: 'Line 2',
-            //     data: (function () {
-            //         var data = [],
-            //                 i;
-
-            //         for (i = 1; i <= tmax; i++) {
-            //             data.push({
-            //                 x: i,
-            //                 y: 0.5 * Math.pow(5-0.1 * i, 0.5)
-            //             });
-            //         }
-            //         return data;
-            //     })()
-            // }
             ]
         });
-    }) //.trigger('submit');
-});
-
-
-
-
-$(document).ready(function () {
-
-
-    $('#ParameterInput').on('submit', function (e) {
-        e.preventDefault();
-        var tmax = parseInt($('#tmax').val());
-        var param_A1 = parseFloat($('#param_A1').val());
-        var param_alpha1 = parseFloat($('#param_alpha1').val());
-        var param_s1 = parseFloat($('#param_s1').val());
-        var param_delta1 = parseFloat($('#param_delta1').val());
-        var param_g1 = parseFloat($('#param_g1').val());
-        var param_n1 = parseFloat($('#param_n1').val());
-        var param_A2 = parseFloat($('#param_A2').val());
-        var param_alpha2 = parseFloat($('#param_alpha2').val());
-        var param_s2 = parseFloat($('#param_s2').val());
-        var param_delta2 = parseFloat($('#param_delta2').val());
-        var param_g2 = parseFloat($('#param_g2').val());
-        var param_n2 = parseFloat($('#param_n2').val());                    
-        var param_k0 = parseFloat($('#param_k0').val());
-        var param_e0 = parseFloat($('#param_e0').val());
-        var param_l0 = parseFloat($('#param_l0').val());
-        var kstar1 = Math.pow(param_s1*param_A1/(param_delta1+param_n1+param_g1),1/(1-param_alpha1));
-        var kstar2 = Math.pow(param_s2*param_A2/(param_delta2+param_n2+param_g2),1/(1-param_alpha2));
-        var interval = 0
-
-        var input = document.getElementById ("steady");
-            if (input.checked == true) {
-                var param_k0 = kstar1;
-            } else {
-                var param_k0 = param_k0;
-            }
-
-        if (tmax<=30) {
-            interval = 5;
-        }
-        else if (30<tmax&&tmax<=100) {
-            interval = 20;
-        }
-        else if (100<tmax&&tmax<=500) {
-            interval = 100;
-        }
-        else {
-            interval = 500;
-        }
 
         $('#output_per_eff_worker').highcharts({
             chart: {
@@ -203,7 +253,7 @@ $(document).ready(function () {
                 series: {
                     lineWidth: 2,
                     marker : {
-                        enabled : true,
+                        enabled : enableMarks,
                         radius : 3},
                     animation: {
                         duration: 10000     //Controls the time required for plot to be fully rendered.
@@ -233,6 +283,7 @@ $(document).ready(function () {
                         return Math.round(this.value*100)/100;
                     }
                 },
+                minRange: 1,
                 plotLines: [{
                     value: 0,
                     width: 2,
@@ -249,24 +300,31 @@ $(document).ready(function () {
             series: [{
                 name: 'y',
                 data: (function () {
-                    var data = [],
-                            i,
-                            klag=param_k0;
+                    var data = [];
 
                     for (i = 0; i <= tmax; i++) {
-                        if (i<5) {
-                            data.push({
+
+                        data.push({
                             x: i,
-                            y: Math.round(100000*param_A1*Math.pow(klag,param_alpha1))/100000
+                            y: Math.round(100000*ySeries[i])/100000,
                         })
-                            klag = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
-                        }
-                        else {
+                    }
+                    return data;
+                })()
+            },
+            {
+                name: 'y original',
+                color: '#f15c80',
+                data: (function () {
+                    var data = [];
+
+                    for (i = 5; i <= tmax; i++) {
+
+                        if (showCounterFactual.checked===true) {
                             data.push({
-                            x: i,
-                            y: Math.round(100000*param_A2*Math.pow(klag,param_alpha2))/100000
-                        })
-                            klag = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
+                                x: i,
+                                y: Math.round(100000*ySeries2[i])/100000,
+                            })
                         }
                     }
                     return data;
@@ -274,58 +332,8 @@ $(document).ready(function () {
             },
             ]
         });
-    }) //.trigger('submit');
-});
 
-
-
-
-$(document).ready(function () {
-
-
-    $('#ParameterInput').on('submit', function (e) {
-        e.preventDefault();
-        var tmax = parseInt($('#tmax').val());
-        var param_A1 = parseFloat($('#param_A1').val());
-        var param_alpha1 = parseFloat($('#param_alpha1').val());
-        var param_s1 = parseFloat($('#param_s1').val());
-        var param_delta1 = parseFloat($('#param_delta1').val());
-        var param_g1 = parseFloat($('#param_g1').val());
-        var param_n1 = parseFloat($('#param_n1').val());
-        var param_A2 = parseFloat($('#param_A2').val());
-        var param_alpha2 = parseFloat($('#param_alpha2').val());
-        var param_s2 = parseFloat($('#param_s2').val());
-        var param_delta2 = parseFloat($('#param_delta2').val());
-        var param_g2 = parseFloat($('#param_g2').val());
-        var param_n2 = parseFloat($('#param_n2').val());                    
-        var param_k0 = parseFloat($('#param_k0').val());
-        var param_e0 = parseFloat($('#param_e0').val());
-        var param_l0 = parseFloat($('#param_l0').val());
-        var kstar1 = Math.pow(param_s1*param_A1/(param_delta1+param_n1+param_g1),1/(1-param_alpha1));
-        var kstar2 = Math.pow(param_s2*param_A2/(param_delta2+param_n2+param_g2),1/(1-param_alpha2));
-        var interval = 0
-
-        var input = document.getElementById ("steady");
-            if (input.checked == true) {
-                var param_k0 = kstar1;
-            } else {
-                var param_k0 = param_k0;
-            }
-
-        if (tmax<=30) {
-            interval = 5;
-        }
-        else if (30<tmax&&tmax<=100) {
-            interval = 20;
-        }
-        else if (100<tmax&&tmax<=500) {
-            interval = 100;
-        }
-        else {
-            interval = 500;
-        }
-
-        $('#cons_per_eff_worker').highcharts({
+        $('#consumption_per_eff_worker').highcharts({
             chart: {
                 type: 'line',
                 marginRight: 10,
@@ -335,7 +343,7 @@ $(document).ready(function () {
                 series: {
                     lineWidth: 2,
                     marker : {
-                        enabled : true,
+                        enabled : enableMarks,
                         radius : 3},
                     animation: {
                         duration: 10000     //Controls the time required for plot to be fully rendered.
@@ -365,6 +373,7 @@ $(document).ready(function () {
                         return Math.round(this.value*100)/100;
                     }
                 },
+                minRange: 1,
                 plotLines: [{
                     value: 0,
                     width: 2,
@@ -379,86 +388,42 @@ $(document).ready(function () {
                 enabled: true
             },
             series: [{
-                name: 'i',
+                name: 'c',
                 data: (function () {
-                    var data = [],
-                            i,
-                            klag=param_k0;
+                    var data = [];
 
                     for (i = 0; i <= tmax; i++) {
-                        if (i<5) {
-                            data.push({
+
+                        data.push({
                             x: i,
-                            y: Math.round(100000*(1-param_s1)*param_A1*Math.pow(klag,param_alpha1))/100000
+                            y: Math.round(100000*cSeries[i])/100000,
                         })
-                            klag = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
-                        }
-                        else {
+                    }
+                    return data;
+                })()
+            },
+            {
+                name: 'c original',
+                color: '#f15c80',
+                data: (function () {
+                    var data = [];
+
+                    for (i = 5; i <= tmax; i++) {
+
+                        if (showCounterFactual.checked===true) {
                             data.push({
-                            x: i,
-                            y: Math.round(100000*(1-param_s2)*param_A2*Math.pow(klag,param_alpha2))/100000
-                        })
-                            klag = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
+                                x: i,
+                                y: Math.round(100000*cSeries2[i])/100000,
+                            })
                         }
                     }
                     return data;
                 })()
-            }
+            },
             ]
         });
-    }) //.trigger('submit');
-});
 
-
-
-
-
-$(document).ready(function () {
-
-
-    $('#ParameterInput').on('submit', function (e) {
-        e.preventDefault();
-        var tmax = parseInt($('#tmax').val());
-        var param_A1 = parseFloat($('#param_A1').val());
-        var param_alpha1 = parseFloat($('#param_alpha1').val());
-        var param_s1 = parseFloat($('#param_s1').val());
-        var param_delta1 = parseFloat($('#param_delta1').val());
-        var param_g1 = parseFloat($('#param_g1').val());
-        var param_n1 = parseFloat($('#param_n1').val());
-        var param_A2 = parseFloat($('#param_A2').val());
-        var param_alpha2 = parseFloat($('#param_alpha2').val());
-        var param_s2 = parseFloat($('#param_s2').val());
-        var param_delta2 = parseFloat($('#param_delta2').val());
-        var param_g2 = parseFloat($('#param_g2').val());
-        var param_n2 = parseFloat($('#param_n2').val());                    
-        var param_k0 = parseFloat($('#param_k0').val());
-        var param_e0 = parseFloat($('#param_e0').val());
-        var param_l0 = parseFloat($('#param_l0').val());
-        var kstar1 = Math.pow(param_s1*param_A1/(param_delta1+param_n1+param_g1),1/(1-param_alpha1));
-        var kstar2 = Math.pow(param_s2*param_A2/(param_delta2+param_n2+param_g2),1/(1-param_alpha2));
-        var interval = 0
-
-        var input = document.getElementById ("steady");
-            if (input.checked == true) {
-                var param_k0 = kstar1;
-            } else {
-                var param_k0 = param_k0;
-            }
-
-        if (tmax<=30) {
-            interval = 5;
-        }
-        else if (30<tmax&&tmax<=100) {
-            interval = 20;
-        }
-        else if (100<tmax&&tmax<=500) {
-            interval = 100;
-        }
-        else {
-            interval = 500;
-        }
-
-        $('#inv_per_eff_worker').highcharts({
+        $('#investment_per_eff_worker').highcharts({
             chart: {
                 type: 'line',
                 marginRight: 10,
@@ -468,7 +433,7 @@ $(document).ready(function () {
                 series: {
                     lineWidth: 2,
                     marker : {
-                        enabled : true,
+                        enabled : enableMarks,
                         radius : 3},
                     animation: {
                         duration: 10000     //Controls the time required for plot to be fully rendered.
@@ -498,6 +463,7 @@ $(document).ready(function () {
                         return Math.round(this.value*100)/100;
                     }
                 },
+                minRange: 1,
                 plotLines: [{
                     value: 0,
                     width: 2,
@@ -514,82 +480,38 @@ $(document).ready(function () {
             series: [{
                 name: 'i',
                 data: (function () {
-                    var data = [],
-                            i,
-                            klag=param_k0;
+                    var data = [];
 
                     for (i = 0; i <= tmax; i++) {
-                        if (i<5) {
-                            data.push({
+
+                        data.push({
                             x: i,
-                            y: Math.round(100000*(param_s1)*param_A1*Math.pow(klag,param_alpha1))/100000
+                            y: Math.round(100000*iSeries[i])/100000,
                         })
-                            klag = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
-                        }
-                        else {
+                    }
+                    return data;
+                })()
+            },
+            {
+                name: 'i original',
+                color: '#f15c80',
+                data: (function () {
+                    var data = [];
+
+                    for (i = 5; i <= tmax; i++) {
+
+                        if (showCounterFactual.checked===true) {
                             data.push({
-                            x: i,
-                            y: Math.round(100000*(param_s2)*param_A2*Math.pow(klag,param_alpha2))/100000
-                        })
-                            klag = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
+                                x: i,
+                                y: Math.round(100000*iSeries2[i])/100000,
+                            })
                         }
                     }
                     return data;
                 })()
-            }
+            },
             ]
         });
-    }) //.trigger('submit');
-});
-
-
-
-
-$(document).ready(function () {
-
-
-    $('#ParameterInput').on('submit', function (e) {
-        e.preventDefault();
-        var tmax = parseInt($('#tmax').val());
-        var param_A1 = parseFloat($('#param_A1').val());
-        var param_alpha1 = parseFloat($('#param_alpha1').val());
-        var param_s1 = parseFloat($('#param_s1').val());
-        var param_delta1 = parseFloat($('#param_delta1').val());
-        var param_g1 = parseFloat($('#param_g1').val());
-        var param_n1 = parseFloat($('#param_n1').val());
-        var param_A2 = parseFloat($('#param_A2').val());
-        var param_alpha2 = parseFloat($('#param_alpha2').val());
-        var param_s2 = parseFloat($('#param_s2').val());
-        var param_delta2 = parseFloat($('#param_delta2').val());
-        var param_g2 = parseFloat($('#param_g2').val());
-        var param_n2 = parseFloat($('#param_n2').val());                    
-        var param_k0 = parseFloat($('#param_k0').val());
-        var param_e0 = parseFloat($('#param_e0').val());
-        var param_l0 = parseFloat($('#param_l0').val());
-        var kstar1 = Math.pow(param_s1*param_A1/(param_delta1+param_n1+param_g1),1/(1-param_alpha1));
-        var kstar2 = Math.pow(param_s2*param_A2/(param_delta2+param_n2+param_g2),1/(1-param_alpha2));
-        var interval = 0
-
-        var input = document.getElementById ("steady");
-            if (input.checked == true) {
-                var param_k0 = kstar1;
-            } else {
-                var param_k0 = param_k0;
-            }
-
-        if (tmax<=30) {
-            interval = 5;
-        }
-        else if (30<tmax&&tmax<=100) {
-            interval = 20;
-        }
-        else if (100<tmax&&tmax<=500) {
-            interval = 100;
-        }
-        else {
-            interval = 500;
-        }
-
         $('#capital_per_worker').highcharts({
             chart: {
                 type: 'line',
@@ -600,7 +522,7 @@ $(document).ready(function () {
                 series: {
                     lineWidth: 2,
                     marker : {
-                        enabled : true,
+                        enabled : enableMarks,
                         radius : 3},
                     animation: {
                         duration: 10000     //Controls the time required for plot to be fully rendered.
@@ -646,104 +568,38 @@ $(document).ready(function () {
             series: [{
                 name: 'k',
                 data: (function () {
-                    var data = [],
-                            i,
-                            e=param_e0,
-                            k=param_k0;
+                    var data = [];
 
                     for (i = 0; i <= tmax; i++) {
-                        if (i<5) {
-                            data.push({
+
+                        data.push({
                             x: i,
-                            y: Math.round(100000*k*e)/100000
+                            y: Math.round(100000*KSeries[i])/100000,
                         })
-                            klag=k,
-                            elag=e,
-                            e = elag*(1+param_g1),
-                            k = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
-                        }
-                        else {
+                    }
+                    return data;
+                })()
+            },
+            {
+                name: 'k original',
+                color: '#f15c80',
+                data: (function () {
+                    var data = [];
+
+                    for (i = 5; i <= tmax; i++) {
+
+                        if (showCounterFactual.checked===true) {
                             data.push({
-                            x: i,
-                            y: Math.round(100000*k*e)/100000
-                        })
-                            klag=k,
-                            elag=e,
-                            e = elag*(1+param_g2),
-                            k = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
+                                x: i,
+                                y: Math.round(100000*KSeries2[i])/100000,
+                            })
                         }
                     }
                     return data;
                 })()
             },
-            //  {
-            //     name: 'Line 2',
-            //     data: (function () {
-            //         var data = [],
-            //                 i;
-
-            //         for (i = 1; i <= tmax; i++) {
-            //             data.push({
-            //                 x: i,
-            //                 y: 0.5 * Math.pow(5-0.1 * i, 0.5)
-            //             });
-            //         }
-            //         return data;
-            //     })()
-            // }
             ]
         });
-    }) //.trigger('submit');
-});
-
-
-
-
-$(document).ready(function () {
-
-
-    $('#ParameterInput').on('submit', function (e) {
-        e.preventDefault();
-        var tmax = parseInt($('#tmax').val());
-        var param_A1 = parseFloat($('#param_A1').val());
-        var param_alpha1 = parseFloat($('#param_alpha1').val());
-        var param_s1 = parseFloat($('#param_s1').val());
-        var param_delta1 = parseFloat($('#param_delta1').val());
-        var param_g1 = parseFloat($('#param_g1').val());
-        var param_n1 = parseFloat($('#param_n1').val());
-        var param_A2 = parseFloat($('#param_A2').val());
-        var param_alpha2 = parseFloat($('#param_alpha2').val());
-        var param_s2 = parseFloat($('#param_s2').val());
-        var param_delta2 = parseFloat($('#param_delta2').val());
-        var param_g2 = parseFloat($('#param_g2').val());
-        var param_n2 = parseFloat($('#param_n2').val());                    
-        var param_k0 = parseFloat($('#param_k0').val());
-        var param_e0 = parseFloat($('#param_e0').val());
-        var param_l0 = parseFloat($('#param_l0').val());
-        var kstar1 = Math.pow(param_s1*param_A1/(param_delta1+param_n1+param_g1),1/(1-param_alpha1));
-        var kstar2 = Math.pow(param_s2*param_A2/(param_delta2+param_n2+param_g2),1/(1-param_alpha2));
-        var interval = 0
-
-        var input = document.getElementById ("steady");
-            if (input.checked == true) {
-                var param_k0 = kstar1;
-            } else {
-                var param_k0 = param_k0;
-            }
-
-        if (tmax<=30) {
-            interval = 5;
-        }
-        else if (30<tmax&&tmax<=100) {
-            interval = 20;
-        }
-        else if (100<tmax&&tmax<=500) {
-            interval = 100;
-        }
-        else {
-            interval = 500;
-        }
-
         $('#output_per_worker').highcharts({
             chart: {
                 type: 'line',
@@ -754,7 +610,7 @@ $(document).ready(function () {
                 series: {
                     lineWidth: 2,
                     marker : {
-                        enabled : true,
+                        enabled : enableMarks,
                         radius : 3},
                     animation: {
                         duration: 10000     //Controls the time required for plot to be fully rendered.
@@ -800,31 +656,31 @@ $(document).ready(function () {
             series: [{
                 name: 'y',
                 data: (function () {
-                    var data = [],
-                            i,
-                            e=param_e0,
-                            k=param_k0;
+                    var data = [];
 
                     for (i = 0; i <= tmax; i++) {
-                        if (i<5) {
-                            data.push({
+
+                        data.push({
                             x: i,
-                            y: Math.round(100000*e*param_A1*Math.pow(k,param_alpha1))/100000
+                            y: Math.round(100000*YSeries[i])/100000,
                         })
-                            elag=e,
-                            e=(1+param_g1)*elag,
-                            klag=k,
-                            k = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
-                        }
-                        else {
+                    }
+                    return data;
+                })()
+            },
+            {
+                name: 'y original',
+                color: '#f15c80',
+                data: (function () {
+                    var data = [];
+
+                    for (i = 5; i <= tmax; i++) {
+
+                        if (showCounterFactual.checked===true) {
                             data.push({
-                            x: i,
-                            y: Math.round(100000*e*param_A2*Math.pow(k,param_alpha2))/100000
-                        })
-                            elag=e,
-                            e=(1+param_g2)*elag,
-                            klag=k,
-                            k = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
+                                x: i,
+                                y: Math.round(100000*YSeries2[i])/100000,
+                            })
                         }
                     }
                     return data;
@@ -832,60 +688,7 @@ $(document).ready(function () {
             },
             ]
         });
-    }) //.trigger('submit');
-});
-
-
-
-
-$(document).ready(function () {
-
-
-    $('#ParameterInput').on('submit', function (e) {
-        e.preventDefault();
-        var tmax = parseInt($('#tmax').val());
-        var param_A1 = parseFloat($('#param_A1').val());
-        var param_alpha1 = parseFloat($('#param_alpha1').val());
-        var param_s1 = parseFloat($('#param_s1').val());
-        var param_delta1 = parseFloat($('#param_delta1').val());
-        var param_g1 = parseFloat($('#param_g1').val());
-        var param_n1 = parseFloat($('#param_n1').val());
-        var param_A2 = parseFloat($('#param_A2').val());
-        var param_alpha2 = parseFloat($('#param_alpha2').val());
-        var param_s2 = parseFloat($('#param_s2').val());
-        var param_delta2 = parseFloat($('#param_delta2').val());
-        var param_g2 = parseFloat($('#param_g2').val());
-        var param_n2 = parseFloat($('#param_n2').val());                    
-        var param_k0 = parseFloat($('#param_k0').val());
-        var param_e0 = parseFloat($('#param_e0').val());
-        var param_l0 = parseFloat($('#param_l0').val());
-        var kstar1 = Math.pow(param_s1*param_A1/(param_delta1+param_n1+param_g1),1/(1-param_alpha1));
-        var kstar2 = Math.pow(param_s2*param_A2/(param_delta2+param_n2+param_g2),1/(1-param_alpha2));
-        var interval = 0
-
-        var input = document.getElementById ("steady");
-            if (input.checked == true) {
-                var param_k0 = kstar1;
-            } else {
-                var param_k0 = param_k0;
-            }
-
-        if (tmax<=30) {
-            interval = 5;
-        }
-        else if (30<tmax&&tmax<=100) {
-            interval = 20;
-        }
-        else if (100<tmax&&tmax<=500) {
-            interval = 100;
-        }
-        else {
-            interval = 500;
-        }
-
-
-
-        $('#cons_per_worker').highcharts({
+        $('#consumption_per_worker').highcharts({
             chart: {
                 type: 'line',
                 marginRight: 10,
@@ -895,7 +698,7 @@ $(document).ready(function () {
                 series: {
                     lineWidth: 2,
                     marker : {
-                        enabled : true,
+                        enabled : enableMarks,
                         radius : 3},
                     animation: {
                         duration: 10000     //Controls the time required for plot to be fully rendered.
@@ -908,9 +711,6 @@ $(document).ready(function () {
                 style: {
                     "fontSize": "15px" 
                 }
-            },
-            tooltip: {
-                shape: "square"
             },
             xAxis: {
                 // type: 'datetime',
@@ -944,31 +744,31 @@ $(document).ready(function () {
             series: [{
                 name: 'c',
                 data: (function () {
-                    var data = [],
-                            i,
-                            e=param_e0,
-                            k=param_k0;
+                    var data = [];
 
                     for (i = 0; i <= tmax; i++) {
-                        if (i<5) {
-                            data.push({
+
+                        data.push({
                             x: i,
-                            y: Math.round(100000*e*(1-param_s1)*param_A1*Math.pow(k,param_alpha1))/100000
+                            y: Math.round(100000*CSeries[i])/100000,
                         })
-                            elag=e,
-                            e=(1+param_g1)*elag,
-                            klag=k,
-                            k = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
-                        }
-                        else {
+                    }
+                    return data;
+                })()
+            },
+            {
+                name: 'c original',
+                color: '#f15c80',
+                data: (function () {
+                    var data = [];
+
+                    for (i = 5; i <= tmax; i++) {
+
+                        if (showCounterFactual.checked===true) {
                             data.push({
-                            x: i,
-                            y: Math.round(100000*e*(1-param_s2)*param_A2*Math.pow(k,param_alpha2))/100000
-                        })
-                            elag=e,
-                            e=(1+param_g1)*elag,
-                            klag=k,
-                            k = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
+                                x: i,
+                                y: Math.round(100000*CSeries2[i])/100000,
+                            })
                         }
                     }
                     return data;
@@ -976,59 +776,7 @@ $(document).ready(function () {
             },
             ]
         });
-    }) //.trigger('submit');
-});
-
-
-
-
-$(document).ready(function () {
-
-
-    $('#ParameterInput').on('submit', function (e) {
-        e.preventDefault();
-        var tmax = parseInt($('#tmax').val());
-        var param_A1 = parseFloat($('#param_A1').val());
-        var param_alpha1 = parseFloat($('#param_alpha1').val());
-        var param_s1 = parseFloat($('#param_s1').val());
-        var param_delta1 = parseFloat($('#param_delta1').val());
-        var param_g1 = parseFloat($('#param_g1').val());
-        var param_n1 = parseFloat($('#param_n1').val());
-        var param_A2 = parseFloat($('#param_A2').val());
-        var param_alpha2 = parseFloat($('#param_alpha2').val());
-        var param_s2 = parseFloat($('#param_s2').val());
-        var param_delta2 = parseFloat($('#param_delta2').val());
-        var param_g2 = parseFloat($('#param_g2').val());
-        var param_n2 = parseFloat($('#param_n2').val());                    
-        var param_k0 = parseFloat($('#param_k0').val());
-        var param_e0 = parseFloat($('#param_e0').val());
-        var param_l0 = parseFloat($('#param_l0').val());
-        var kstar1 = Math.pow(param_s1*param_A1/(param_delta1+param_n1+param_g1),1/(1-param_alpha1));
-        var kstar2 = Math.pow(param_s2*param_A2/(param_delta2+param_n2+param_g2),1/(1-param_alpha2));
-        var interval = 0
-
-        var input = document.getElementById ("steady");
-            if (input.checked == true) {
-                var param_k0 = kstar1;
-            } else {
-                var param_k0 = param_k0;
-            }
-        if (tmax<=30) {
-            interval = 5;
-        }
-        else if (30<tmax&&tmax<=100) {
-            interval = 20;
-        }
-        else if (100<tmax&&tmax<=500) {
-            interval = 100;
-        }
-        else {
-            interval = 500;
-        }
-
-
-
-        $('#inv_per_worker').highcharts({
+        $('#investment_per_worker').highcharts({
             chart: {
                 type: 'line',
                 marginRight: 10,
@@ -1038,7 +786,7 @@ $(document).ready(function () {
                 series: {
                     lineWidth: 2,
                     marker : {
-                        enabled : true,
+                        enabled : enableMarks,
                         radius : 3},
                     animation: {
                         duration: 10000     //Controls the time required for plot to be fully rendered.
@@ -1051,9 +799,6 @@ $(document).ready(function () {
                 style: {
                     "fontSize": "15px" 
                 }
-            },
-            tooltip: {
-                shape: "square"
             },
             xAxis: {
                 // type: 'datetime',
@@ -1087,37 +832,42 @@ $(document).ready(function () {
             series: [{
                 name: 'i',
                 data: (function () {
-                    var data = [],
-                            i,
-                            e=param_e0,
-                            k=param_k0;
+                    var data = [];
 
                     for (i = 0; i <= tmax; i++) {
-                        if (i<5) {
-                            data.push({
+
+                        data.push({
                             x: i,
-                            y: Math.round(100000*e*(param_s1)*param_A1*Math.pow(k,param_alpha1))/100000
+                            y: Math.round(100000*ISeries[i])/100000,
                         })
-                            elag=e,
-                            e=(1+param_g1)*elag,
-                            klag=k,
-                            k = klag + param_s1*param_A1*Math.pow(klag,param_alpha1) - (param_delta1+param_n1+param_g1)*klag
-                        }
-                        else {
+                    }
+                    return data;
+                })()
+            },
+            {
+                name: 'i original',
+                color: '#f15c80',
+                data: (function () {
+                    var data = [];
+
+                    for (i = 5; i <= tmax; i++) {
+
+                        if (showCounterFactual.checked===true) {
                             data.push({
-                            x: i,
-                            y: Math.round(100000*e*(param_s2)*param_A2*Math.pow(k,param_alpha2))/100000
-                        })
-                            elag=e,
-                            e=(1+param_g1)*elag,
-                            klag=k,
-                            k = klag + param_s2*param_A2*Math.pow(klag,param_alpha2) - (param_delta2+param_n2+param_g2)*klag
+                                x: i,
+                                y: Math.round(100000*ISeries2[i])/100000,
+                            })
                         }
                     }
                     return data;
                 })()
-            }
+            },
             ]
         });
     }) //.trigger('submit');
 });
+
+function reloadFunction() {
+    location.reload();
+}
+
